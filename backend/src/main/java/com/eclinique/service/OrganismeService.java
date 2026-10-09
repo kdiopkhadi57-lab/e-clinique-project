@@ -1,0 +1,110 @@
+package com.eclinique.service;
+
+import com.eclinique.audit.Audite;
+import com.eclinique.audit.TypeActionAudit;
+import com.eclinique.dto.CreanceOrganismeResponse;
+import com.eclinique.exception.BusinessException;
+import com.eclinique.exception.ResourceNotFoundException;
+import com.eclinique.model.FactureOrganisme;
+import com.eclinique.model.Organisme;
+import com.eclinique.model.StatutFacture;
+import com.eclinique.repository.EncaissementRepository;
+import com.eclinique.repository.FactureOrganismeRepository;
+import com.eclinique.repository.FactureRepository;
+import com.eclinique.repository.OrganismeRepository;
+import com.eclinique.repository.PatientRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class OrganismeService {
+    private final OrganismeRepository organismeRepository;
+    private final EncaissementRepository encaissementRepository;
+    private final FactureOrganismeRepository factureOrganismeRepository;
+    private final FactureRepository factureRepository;
+    private final PatientRepository patientRepository;
+
+    @Transactional(readOnly = true)
+    public List<Organisme> findAll(boolean actifsSeulement) {
+        return actifsSeulement ? organismeRepository.findByActifTrueOrderByNomAsc() : organismeRepository.findAllByOrderByNomAsc();
+    }
+
+    public Organisme findById(Long id) {
+        return organismeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Organisme introuvable : " + id));
+    }
+
+    public Organisme create(Organisme organisme) {
+        if (organismeRepository.existsByNomIgnoreCase(organisme.getNom().trim())) {
+            throw new IllegalArgumentException("Un organisme nommé " + organisme.getNom() + " existe déjà");
+        }
+        organisme.setId(null);
+        organisme.setNom(organisme.getNom().trim());
+        return organismeRepository.save(organisme);
+    }
+
+    public Organisme update(Long id, Organisme donnees) {
+        Organisme organisme = findById(id);
+        organisme.setNom(donnees.getNom().trim());
+        organisme.setType(donnees.getType());
+        organisme.setTauxPriseEnCharge(donnees.getTauxPriseEnCharge());
+        organisme.setAdresse(donnees.getAdresse());
+        organisme.setTelephone(donnees.getTelephone());
+        organisme.setEmail(donnees.getEmail());
+        organisme.setNinea(donnees.getNinea());
+        organisme.setContact(donnees.getContact());
+        organisme.setActif(donnees.isActif());
+        return organismeRepository.save(organisme);
+    }
+
+    /**
+     * Supprime un organisme saisi par erreur. Un organisme déjà utilisé (patients assurés, factures,
+     * prises en charge à l'accueil) est conservé pour l'historique : il faut alors le désactiver.
+     */
+    @Audite(action = TypeActionAudit.SUPPRESSION, entite = "Organisme")
+    public void delete(Long id) {
+        Organisme organisme = findById(id);
+        if (patientRepository.existsByOrganismeId(id) || factureRepository.existsByOrganismeId(id)
+                || factureOrganismeRepository.existsByOrganismeId(id) || encaissementRepository.existsByOrganismeId(id)) {
+            throw new BusinessException("Impossible de supprimer " + organisme.getNom()
+                    + " : des patients, factures ou prises en charge y sont rattachés."
+                    + " Désactivez-le plutôt (case « Actif »).");
+        }
+        organismeRepository.delete(organisme);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CreanceOrganismeResponse> creances() {
+        Map<Long, FactureOrganisme> factures = factureOrganismeRepository.findAll().stream()
+                .collect(Collectors.toMap(FactureOrganisme::getId, Function.identity()));
+        // Prises en charge à l'accueil et factures patients en tiers-payant : (organisme, facture organisme, part)
+        record Prise(Long organismeId, Long factureOrganismeId, double part) {}
+        Map<Long, List<Prise>> parOrganisme = java.util.stream.Stream.concat(
+                encaissementRepository.findByOrganismeIdIsNotNull().stream()
+                        .map(e -> new Prise(e.getOrganismeId(), e.getFactureOrganismeId(), e.partOrganismeEffective())),
+                factureRepository.findTiersPayantNonAnnulees().stream()
+                        .filter(f -> f.partOrganismeEffective() > 0)
+                        .map(f -> new Prise(f.getOrganisme().getId(), f.getFactureOrganismeId(), f.partOrganismeEffective())))
+                .collect(Collectors.groupingBy(Prise::organismeId));
+        return organismeRepository.findAllByOrderByNomAsc().stream().map(o -> {
+            List<Prise> prises = parOrganisme.getOrDefault(o.getId(), List.of());
+            double nonFacture = 0, enAttente = 0, paye = 0;
+            for (Prise p : prises) {
+                FactureOrganisme f = p.factureOrganismeId() == null ? null : factures.get(p.factureOrganismeId());
+                if (f == null) nonFacture += p.part();
+                else if (f.getStatut() == StatutFacture.PAYEE) paye += p.part();
+                else enAttente += p.part();
+            }
+            return new CreanceOrganismeResponse(o.getId(), o.getNom(), o.getType(), prises.size(),
+                    nonFacture + enAttente + paye, nonFacture, enAttente, paye);
+        }).toList();
+    }
+}

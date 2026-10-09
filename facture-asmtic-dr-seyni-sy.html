@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Facture pro forma ASMTIC - Dr Seyni Sy</title>
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px; color: #1f2933; background: #f4f6f8; font-family: Arial, sans-serif; }
+    .facture { max-width: 850px; margin: auto; padding: 48px; background: #fff; }
+    .entete { display: flex; justify-content: space-between; gap: 32px; padding-bottom: 28px; border-bottom: 3px solid #0b7a53; }
+    h1 { margin: 0 0 10px; color: #0b7a53; font-size: 28px; }
+    h2 { margin: 0; font-size: 22px; text-align: right; }
+    p { margin: 5px 0; }
+    .muted { color: #66727d; }
+    .client { display: flex; justify-content: space-between; gap: 32px; margin: 34px 0; }
+    .bloc { flex: 1; }
+    .label { margin-bottom: 8px; color: #0b7a53; font-size: 12px; font-weight: bold; letter-spacing: .08em; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 13px 10px; border-bottom: 1px solid #dfe4e8; text-align: left; }
+    th { color: #fff; background: #0b7a53; }
+    td:last-child, th:last-child { text-align: right; }
+    .total { width: 320px; margin: 24px 0 0 auto; }
+    .total td { border: 0; }
+    .total .grand td { padding-top: 16px; border-top: 2px solid #0b7a53; color: #0b7a53; font-size: 19px; font-weight: bold; }
+    .paiement { margin-top: 36px; padding: 18px; border-left: 4px solid #0b7a53; background: #eef7f2; }
+    .signatures { display: flex; justify-content: space-between; gap: 80px; margin-top: 70px; }
+    .signature { flex: 1; padding-top: 10px; border-top: 1px solid #66727d; text-align: center; }
+    .footer { margin-top: 42px; padding-top: 15px; border-top: 1px solid #dfe4e8; color: #66727d; font-size: 12px; text-align: center; }
+    @media print {
+      body { padding: 0; background: #fff; }
+      .facture { max-width: none; padding: 20mm; }
+    }
+  </style>
+</head>
+<body>
+  <main class="facture">
+    <header class="entete">
+      <div>
+        <h1>ASMTIC</h1>
+        <p>Solutions informatiques et accompagnement numerique</p>
+        <p class="muted">Email : moussa.thioune@yaspartenaire.sn</p>
+      </div>
+      <div>
+        <h2>FACTURE PRO FORMA</h2>
+        <p class="muted">N° ASMTIC-2026-001</p>
+        <p class="muted">Date : 08/09/2026</p>
+      </div>
+    </header>
+
+    <section class="client">
+      <div class="bloc">
+        <div class="label">Prestataire</div>
+        <p><strong>Entreprise ASMTIC</strong></p>
+        <p>Email : moussa.thioune@yaspartenaire.sn</p>
+      </div>
+      <div class="bloc">
+        <div class="label">Client</div>
+        <p><strong>Dr Seyni Sy</strong></p>
+        <p>Mboro</p>
+        <p>Tel : 76 180 65 02</p>
+      </div>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Designation</th>
+          <th>Quantite</th>
+          <th>Montant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Installation, configuration et mise en service de l'application E-Clinique</td>
+          <td>1</td>
+          <td>500 000 FCFA</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="total">
+      <tr><td>Sous-total</td><td>500 000 FCFA</td></tr>
+      <tr><td>Remise</td><td>0 FCFA</td></tr>
+      <tr class="grand"><td>Total a payer</td><td>500 000 FCFA</td></tr>
+    </table>
+
+    <section class="paiement">
+      <strong>Modalites de paiement</strong>
+      <p>Une avance de 150 000 FCFA a deja ete versee. Le solde de 350 000 FCFA sera regle en trois tranches :</p>
+      <p>1. 116 667 FCFA apres installation et configuration</p>
+      <p>2. 116 667 FCFA apres formation et remise des acces</p>
+      <p>3. 116 666 FCFA apres validation et mise en production</p>
+    </section>
+
+    <div class="signatures">
+      <div class="signature">Signature ASMTIC</div>
+      <div class="signature">Signature du client</div>
+    </div>
+
+    <footer class="footer">Document pro forma - Merci pour votre confiance.</footer>
+  </main>
+</body>
+</html>

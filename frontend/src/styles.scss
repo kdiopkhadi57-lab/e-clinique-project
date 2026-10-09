@@ -1,0 +1,234 @@
+/* Styles globaux de l'application du Cabinet Médical Demba Bodiel SY */
+:root {
+  --eclinique-primary: #0b7a53;
+  --eclinique-primary-dark: #07513a;
+  --eclinique-accent: #38b878;
+  --eclinique-bg: #f3f8f5;
+}
+
+body {
+  background-color: var(--eclinique-bg);
+  color: #1d332a;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+.btn-primary {
+  background-color: var(--eclinique-primary);
+  border-color: var(--eclinique-primary);
+}
+.btn-primary:hover {
+  background-color: var(--eclinique-primary-dark);
+  border-color: var(--eclinique-primary-dark);
+}
+
+.btn-save,
+.btn-save:hover,
+.btn-save:focus,
+.btn-save:active {
+  color: #fff !important;
+  background-color: var(--eclinique-primary) !important;
+  border-color: var(--eclinique-primary) !important;
+}
+
+.btn-save:hover,
+.btn-save:focus {
+  background-color: var(--eclinique-primary-dark) !important;
+  border-color: var(--eclinique-primary-dark) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.text-primary {
+  color: var(--eclinique-primary) !important;
+}
+
+.btn-primary,
+.btn-success,
+.btn-danger,
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-secondary {
+  color: #fff;
+  background-color: var(--eclinique-primary);
+  border-color: var(--eclinique-primary);
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-danger:hover,
+.btn-outline-primary:hover,
+.btn-outline-success:hover,
+.btn-outline-danger:hover,
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: var(--eclinique-primary-dark);
+  border-color: var(--eclinique-primary-dark);
+}
+
+.card-stat {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.badge-alerte {
+  background-color: #dc3545;
+}
+
+.table thead {
+  background-color: #eef3f9;
+}
+
+@media print {
+  .no-print { display: none !important; }
+}
+
+/* ===== Expérience application mobile (smartphones, iPhone, tablettes, iPad) ===== */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+a, button, .btn, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Le menu latéral ouvert bloque le défilement de la page, comme un tiroir natif. */
+body.menu-mobile-ouvert {
+  overflow: hidden;
+}
+
+/* Chaque écran apparaît avec une courte animation, comme une navigation d'application. */
+.app-content > router-outlet + * {
+  display: block;
+  animation: entree-ecran .22s ease-out;
+}
+
+@keyframes entree-ecran {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-content > router-outlet + * { animation: none; }
+}
+
+@media (max-width: 991.98px), (hover: none) and (pointer: coarse) {
+  /* 16px minimum : évite le zoom automatique de Safari iOS au toucher d'un champ. */
+  .form-control, .form-select, .form-control-sm, .form-select-sm,
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    font-size: 16px;
+  }
+
+  .form-control, .form-select { min-height: 44px; }
+  .btn { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: .35rem; }
+  .btn:has(> .d-block) { flex-direction: column; }
+  .btn-sm { min-height: 36px; min-width: 36px; }
+  .btn-close { width: 1.25rem; height: 1.25rem; padding: .6rem; }
+
+  .card { border-radius: 14px; }
+  .alert { border-radius: 12px; }
+  /* Onglets : se partagent la largeur, comme un sélecteur segmenté. */
+  .nav-tabs { flex-wrap: nowrap; }
+  .nav-tabs > .nav-item { flex: 1 1 0; min-width: 0; }
+  .nav-tabs .nav-link { width: 100%; height: 100%; padding: .55rem .4rem; font-size: .85rem; text-align: center; }
+
+  /* En-têtes d'écran (titre + actions) : les boutons passent à la ligne au lieu de déborder. */
+  .d-flex.justify-content-between { flex-wrap: wrap; gap: .75rem; }
+  /* Rangées de boutons d'action : passent à la ligne au lieu de sortir de l'écran. */
+  .d-flex:has(> .btn) { flex-wrap: wrap; }
+  .input-group[style*="max-width"] { max-width: none !important; }
+}
+
+@media (max-width: 767.98px) {
+  h4, .h4 { font-size: 1.25rem; }
+
+  /* Tableaux : chaque ligne devient une carte « libellé : valeur » (libellés posés par TableauxMobilesService). */
+  .card:has(> .table-responsive > .table) {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .table-responsive > .table,
+  .table-responsive > .table > tbody,
+  .table-responsive > .table > tbody > tr,
+  .table-responsive > .table > tbody > tr > td {
+    display: block;
+    width: 100%;
+  }
+
+  .table-responsive > .table { margin-bottom: 0; background: transparent; }
+  .table-responsive > .table > thead { display: none; }
+
+  .table-responsive > .table > tbody > tr {
+    margin-bottom: .65rem;
+    padding: .55rem .9rem;
+    border: 1px solid #e1ebe6;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(7, 57, 45, .05);
+  }
+
+  .table-responsive > .table > tbody > tr > td {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: .4rem;
+    min-height: 2.25rem;
+    padding: .35rem 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .table-responsive > .table > tbody > tr > td + td { border-top: 1px dashed #edf2ef; }
+  .table-responsive > .table > tbody > tr > td:first-child { font-weight: 600; }
+
+  .table-responsive > .table > tbody > tr > td::before {
+    content: attr(data-label);
+    flex-shrink: 0;
+    max-width: 45%;
+    margin-right: auto;
+    padding-right: .6rem;
+    color: #6b7d75;
+    font-size: .78rem;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .table-responsive > .table > tbody > tr > td[data-label=""]::before,
+  .table-responsive > .table > tbody > tr > td:not([data-label])::before { display: none; }
+
+  /* Ligne « aucun résultat » qui s'étend sur toutes les colonnes. */
+  .table-responsive > .table > tbody > tr > td[colspan] { justify-content: center; font-weight: 400; text-align: center; }
+  .table-responsive > .table > tbody > tr > td[colspan]::before { display: none; }
+
+  /* Cellules de saisie (lignes de facture, prescriptions) : libellé au-dessus du champ. */
+  .table-responsive > .table > tbody > tr > td:has(.form-control, .form-select) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .3rem;
+    text-align: left;
+  }
+  .table-responsive > .table > tbody > tr > td:has(.form-control, .form-select)::before { max-width: none; margin-right: 0; }
+
+  /* Ligne de total : carte récapitulative mise en avant. */
+  .table-responsive > .table > tfoot { display: block; }
+  .table-responsive > .table > tfoot > tr {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: .25rem 1rem;
+    padding: .65rem .9rem;
+    border-radius: 14px;
+    background: #e3f1ea;
+    font-weight: 700;
+  }
+  .table-responsive > .table > tfoot > tr > * { display: block; padding: 0; border: 0; background: transparent; box-shadow: none; }
+  .table-responsive > .table > tfoot > tr > :empty { display: none; }
+}

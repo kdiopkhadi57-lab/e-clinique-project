@@ -1,0 +1,15 @@
+# Backend
+backend/target/
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/*.log
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
